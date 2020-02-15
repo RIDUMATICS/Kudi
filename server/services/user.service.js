@@ -3,6 +3,8 @@ import { config } from 'dotenv';
 import { registerAuthy, sendAutyToken, verifyAuthyToken } from '../utils/authyHelper';
 import genToken from '../utils/generateToken';
 import { User } from '../database/models';
+import sendMail from '../utils/email';
+import messageTemplate from '../utils/messageTemplate';
 
 config();
 
@@ -107,6 +109,32 @@ class UserService {
       const error = new Error('Enable 2FA is not set');
       error.status = 401;
       throw error;
+    } catch (err) {
+      err.status = err.status || 500;
+      throw err;
+    }
+  }
+
+  static async createAStaff(user, profileImage) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const isStaff = await User.findByPk(user.email);
+
+      if (isStaff) {
+        const err = new Error('a user with this email address already exist');
+        err.status = 409;
+        throw err;
+      }
+
+      const newStaff = { ...user, type: 'staff', profileImage: profileImage.secure_url };
+
+      const { dataValues } = await User.create(newStaff);
+
+      await sendMail(user.email, 'An account has been created for you on KUDI', messageTemplate.staffCreated(user));
+
+      return {
+        user: _.omit(dataValues, ['password', 'updatedAt', 'createdAt'])
+      };
     } catch (err) {
       err.status = err.status || 500;
       throw err;

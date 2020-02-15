@@ -42,6 +42,12 @@ class UserController {
       .then((resp) => response.sendSuccess(res, 201, resp, 'LogIn was successful'))
       .catch((err) => response.sendError(res, err.status, err.message));
   }
+
+  static createStaff(req, res) {
+    UserService.createAStaff(req.body, req.file || { secure_url: 'https://avatars.dicebear.com/v2/bottts/hap.svg' })
+      .then((createdStaff) => response.sendSuccess(res, 201, createdStaff, 'Registration was successful'))
+      .catch((err) => response.sendError(res, err.status, err.message));
+  }
 }
 
 export default UserController;

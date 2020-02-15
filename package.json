@@ -9,6 +9,7 @@
     "serve": "node dist/app.js"
   },
   "dependencies": {
+    "@sendgrid/mail": "6.5.2",
     "authy": "1.4.0",
     "authy-client": "1.1.4",
     "bcryptjs": "2.4.3",

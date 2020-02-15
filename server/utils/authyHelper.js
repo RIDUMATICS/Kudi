@@ -37,6 +37,7 @@ export const sendAutyToken = ({
 }));
 
 export const verifyAuthyToken = (authyID, token) => new Promise((resolve, reject) => {
+  console.log(authyID, token);
   authy.verify(authyID, token, (err, tokenRes) => {
     if (err) {
       if (err.message === 'Token is invalid. Token was used recently' || err.message === 'Token is invalid') {
