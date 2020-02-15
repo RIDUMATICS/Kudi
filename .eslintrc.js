@@ -3,8 +3,8 @@ module.exports = {
     "plugins": ["prettier", "import"],
 
     "rules": {
-        "prettier/prettier": "error",
         "linebreak-style": 0,
-        "comma-dangle": 0
+        "comma-dangle": 0,
+        "eol-last": 0
     }
 };
