@@ -25,11 +25,25 @@ const loginUserSchema = Joi.object({
 });
 
 const verifyAuthyTokenSchema = Joi.object({
-  authyToken: Joi.number().required().error(new Error('Please enter a valid token'))
+  authyToken: Joi.string().required().error(new Error('Please enter a valid token'))
+});
+
+const createStaffSchema = Joi.object({
+  firstName: Joi.string().regex(/^\D+$/).required().error(new Error('Please enter a valid first name')),
+  lastName: Joi.string().regex(/^\D+$/).required().error(new Error('Please enter a valid last name')),
+  email,
+  password,
+  confirmPassword: Joi.string().valid(Joi.ref('password')).required().strict()
+    .error(new Error('your password and confirm password do not match')),
+  countryCode: Joi.string().regex(/^(\+?\d{1,3}|\d{1,4})$/).required().error(new Error('Please enter a valid Country Code')),
+  phoneNumber: Joi.string().regex(/^\d{1,14}$/).required().error(new Error('Please enter a valid phone number')),
+  enable2FA: Joi.boolean().default(false),
+  isAdmin: Joi.boolean().required().error(new Error('isAdmin is requires'))
 });
 
 export default {
   '/auth/signup': createUserSchema,
   '/auth/signin': loginUserSchema,
-  '/auth/2fa': verifyAuthyTokenSchema
+  '/auth/2fa': verifyAuthyTokenSchema,
+  '/create/staff': createStaffSchema
 };
