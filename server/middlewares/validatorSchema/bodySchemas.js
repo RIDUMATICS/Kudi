@@ -41,9 +41,14 @@ const createStaffSchema = Joi.object({
   isAdmin: Joi.boolean().required().error(new Error('isAdmin is requires'))
 });
 
+const createAccountSchema = Joi.object({
+  type: Joi.string().lowercase().valid('savings', 'current').required(),
+});
+
 export default {
-  '/auth/signup': createUserSchema,
-  '/auth/signin': loginUserSchema,
-  '/auth/2fa': verifyAuthyTokenSchema,
-  '/create/staff': createStaffSchema
+  '/signup': createUserSchema,
+  '/signin': loginUserSchema,
+  '/2fa': verifyAuthyTokenSchema,
+  '/create/staff': createStaffSchema,
+  '/accounts': createAccountSchema,
 };

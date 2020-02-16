@@ -51,9 +51,8 @@ export const check2FA = (req, res, next) => {
       'How did you get pass the authentication middleware 😩😢😫',
     );
   }
-  const { allowOnly2FA } = req.payload;
 
-  if (allowOnly2FA) {
+  if (req.payload.allowOnly2FA) {
     return response.sendError(res, 401, 'verify account');
   }
   return next();

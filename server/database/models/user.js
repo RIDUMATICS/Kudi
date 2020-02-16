@@ -24,9 +24,12 @@ module.exports = (sequelize, DataTypes) => {
     enable2FA: DataTypes.BOOLEAN,
     authyID: DataTypes.STRING,
   }, {});
-  // eslint-disable-next-line no-unused-vars
   User.associate = (models) => {
     // associations can be defined here
+    User.hasMany(models.Account, {
+      foreignKey: 'owner',
+      as: 'accounts'
+    });
   };
   // eslint-disable-next-line func-names
   User.beforeCreate(function (user) {
