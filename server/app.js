@@ -3,6 +3,7 @@ import {
   log
 } from 'debug';
 import userRouter from './routes/api/v1/user.route';
+import accountRouter from './routes/api/v1/account.route';
 
 const app = express();
 const port = process.env.PORT || 8009;
@@ -22,7 +23,8 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use('/api/v1', userRouter);
+app.use('/api/v1/auth', userRouter);
+app.use('/api/v1', accountRouter);
 
 
 app.listen(port, () => {
