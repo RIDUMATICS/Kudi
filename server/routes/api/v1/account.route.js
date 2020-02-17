@@ -51,4 +51,12 @@ router
     staffAuth,
     AccountContoller.changeStatus);
 
+router
+  .delete('/accounts/:accountNumber',
+    authMiddleware,
+    check2FA,
+    ParamsSchemaValidator,
+    staffAuth,
+    AccountContoller.deleteAccount);
+
 export default router;
