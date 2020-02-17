@@ -166,6 +166,30 @@ class AccountService {
       throw error;
     }
   }
+
+  /**
+   * @description  delete a specific user account
+   * @param {object} response
+   */
+  static async deleteAccount({ accountNumber }) {
+    try {
+      const account = await Account.findOne({ where: { accountNumber } });
+
+      if (account) {
+        const isDeleted = await account.destroy();
+
+        if (isDeleted) {
+          return;
+        }
+      }
+      const error = new Error('account number doesn\'t exist');
+      error.status = 404;
+      throw error;
+    } catch (error) {
+      error.status = error.status || 500;
+      throw error;
+    }
+  }
 }
 
 export default AccountService;

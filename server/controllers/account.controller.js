@@ -66,6 +66,18 @@ class AccountController {
       .then((resp) => response.sendSuccess(res, 200, resp, 'Account update successfull'))
       .catch((err) => response.sendError(res, err.status, err.message));
   }
+
+  /**
+   * @param{object}  request express request object
+   * @param{object}  response express request object
+   * @returns {json} json
+   * @memberof AccountController
+   */
+  static deleteAccount(req, res) {
+    AccountService.deleteAccount(req.params)
+      .then(() => response.sendSuccess(res, 200, null, 'Account successfully deleted'))
+      .catch((err) => response.sendError(res, err.status, err.message));
+  }
 }
 
 export default AccountController;
