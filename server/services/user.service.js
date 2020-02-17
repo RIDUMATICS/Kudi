@@ -16,7 +16,7 @@ class UserService {
    */
   static async createUser(user, profileImage) {
     try {
-      const isUser = await User.findByPk(user.email);
+      const isUser = await User.findOne({ where: { email: user.email } });
       let authyID;
 
       if (isUser) {
@@ -63,7 +63,7 @@ class UserService {
     password
   }) {
     try {
-      const user = await User.findByPk(email);
+      const user = await User.findOne({ where: { email } });
       if (user) {
         const isValid = user.validatePassword(password);
 
@@ -96,7 +96,7 @@ class UserService {
   static async verifyToken({ authyToken }, payload) {
     try {
       if (payload.allowOnly2FA) {
-        const { dataValues } = await User.findByPk(payload.user);
+        const { dataValues } = await User.findOne({ where: { email: payload.user } });
         await verifyAuthyToken(dataValues.authyID, authyToken);
 
         const token = genToken(_.omit(dataValues, ['enable2FA']));
@@ -115,25 +115,25 @@ class UserService {
     }
   }
 
-  static async createAStaff(user, profileImage) {
+  static async createAStaff(staff, profileImage) {
     // eslint-disable-next-line no-useless-catch
     try {
-      const isStaff = await User.findByPk(user.email);
+      const isStaff = await User.findOne({ where: { email: staff.email } });
 
       if (isStaff) {
-        const err = new Error('a user with this email address already exist');
+        const err = new Error(`a ${isStaff.type} with this email address already exist`);
         err.status = 409;
         throw err;
       }
 
-      const newStaff = { ...user, type: 'staff', profileImage: profileImage.secure_url };
+      const newStaff = { ...staff, type: 'staff', profileImage: profileImage.secure_url };
 
       const { dataValues } = await User.create(newStaff);
 
-      await sendMail(user.email, 'An account has been created for you on KUDI', messageTemplate.staffCreated(user));
+      await sendMail(staff.email, 'An account has been created for you on KUDI', messageTemplate.staffCreated(staff));
 
       return {
-        user: _.omit(dataValues, ['password', 'updatedAt', 'createdAt'])
+        staff: _.omit(dataValues, ['password', 'updatedAt', 'createdAt'])
       };
     } catch (err) {
       err.status = err.status || 500;

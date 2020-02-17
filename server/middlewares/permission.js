@@ -36,7 +36,7 @@ export const staffAuth = (req, res, next) => {
   }
   const { type } = req.payload;
 
-  if (type === 'staff') {
+  if (type !== 'staff') {
     return response.sendError(res, 403, 'only an staff can perform this operation');
   }
   return next();
