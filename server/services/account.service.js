@@ -138,6 +138,34 @@ class AccountService {
       throw error;
     }
   }
+
+  /**
+   * @description this function change account status
+   * @param {object} response
+   */
+  static async changeAccountStatus({ status }, { accountNumber }) {
+    try {
+      const account = await Account.findOne({
+        where: { accountNumber },
+        include: {
+          model: User,
+          as: 'user'
+        }
+      });
+      if (account) {
+        account.status = status;
+        await account.save();
+
+        return _.pick(account, ['accountNumber', 'type', 'balance', 'status', 'user.firstName', 'user.lastName', 'user.email']);
+      }
+      const error = new Error('account number doesn\'t exist');
+      error.status = 404;
+      throw error;
+    } catch (error) {
+      error.status = error.status || 500;
+      throw error;
+    }
+  }
 }
 
 export default AccountService;

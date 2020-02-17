@@ -42,4 +42,13 @@ router
     ParamsSchemaValidator,
     AccountContoller.getAccount);
 
+router
+  .patch('/accounts/:accountNumber',
+    authMiddleware,
+    check2FA,
+    ParamsSchemaValidator,
+    BodySchemaValidator,
+    staffAuth,
+    AccountContoller.changeStatus);
+
 export default router;
