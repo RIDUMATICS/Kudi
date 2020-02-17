@@ -54,6 +54,18 @@ class AccountController {
       .then((resp) => response.sendSuccess(res, 200, resp, 'Account fetch successfull'))
       .catch((err) => response.sendError(res, err.status, err.message));
   }
+
+  /**
+   * @param{object}  request express request object
+   * @param{object}  response express request object
+   * @returns {json} json
+   * @memberof AccountController
+   */
+  static changeStatus(req, res) {
+    AccountService.changeAccountStatus(req.body, req.params)
+      .then((resp) => response.sendSuccess(res, 200, resp, 'Account update successfull'))
+      .catch((err) => response.sendError(res, err.status, err.message));
+  }
 }
 
 export default AccountController;
