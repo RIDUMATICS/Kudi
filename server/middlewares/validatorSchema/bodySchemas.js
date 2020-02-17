@@ -42,7 +42,13 @@ const createStaffSchema = Joi.object({
 });
 
 const createAccountSchema = Joi.object({
-  type: Joi.string().lowercase().valid('savings', 'current').required(),
+  type: Joi.string().lowercase().valid('savings', 'current').required()
+    .error(new Error('Please enter a valid account type [savings, current]')),
+});
+
+const updateStatusSchema = Joi.object({
+  status: Joi.string().lowercase().valid('dormant', 'active').required()
+    .error(new Error('Please enter a valid account status [dormant, active]')),
 });
 
 export default {
@@ -51,4 +57,5 @@ export default {
   '/2fa': verifyAuthyTokenSchema,
   '/create/staff': createStaffSchema,
   '/accounts': createAccountSchema,
+  '/accounts/:accountNumber': updateStatusSchema,
 };

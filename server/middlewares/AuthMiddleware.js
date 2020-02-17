@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import ResponseGenerator from '../utils/ResponseGenerator';
+import { User } from '../database/models';
 
 const response = new ResponseGenerator();
 
@@ -17,7 +18,9 @@ const decodeToken = (req, res, next, token) => {
   jwt.verify(token, process.env.secretOrPrivateKey, (error, decode) => {
     if (!error && decode) {
       req.payload = decode;
-      return next();
+      return User.findOne({ where: { email: decode.email } })
+        .then(() => next())
+        .catch(() => response.sendError(res, 401, 'invalid request token'));
     }
     return response.sendError(res, 401, 'invalid request token');
   });

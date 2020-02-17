@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   Account.associate = (models) => {
     Account.belongsTo(models.User, {
       foreignKey: 'owner',
+      as: 'user'
     });
   };
   // eslint-disable-next-line func-names
