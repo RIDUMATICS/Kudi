@@ -5,7 +5,7 @@ import ResponseGenerator from '../utils/ResponseGenerator';
 const response = new ResponseGenerator();
 
 
-const BodySchemaValidator = (req, res, next) => {
+const QuerySchemaValidator = (req, res, next) => {
   const { path } = req.route;
 
   // Joi validation options
@@ -24,4 +24,4 @@ const BodySchemaValidator = (req, res, next) => {
   }
 };
 
-export default BodySchemaValidator;
+export default QuerySchemaValidator;

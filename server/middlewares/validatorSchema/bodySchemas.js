@@ -51,6 +51,11 @@ const updateStatusSchema = Joi.object({
     .error(new Error('Please enter a valid account status [dormant, active]')),
 });
 
+const transactionSchema = Joi.object({
+  amount: Joi.number().min(0.0).positive().precision(2)
+    .required(),
+});
+
 export default {
   '/signup': createUserSchema,
   '/signin': loginUserSchema,
@@ -58,4 +63,6 @@ export default {
   '/create/staff': createStaffSchema,
   '/accounts': createAccountSchema,
   '/accounts/:accountNumber': updateStatusSchema,
+  '/transactions/:accountNumber/debit': transactionSchema,
+  '/transactions/:accountNumber/credit': transactionSchema,
 };
