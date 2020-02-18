@@ -24,8 +24,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'owner',
       as: 'user'
     });
+    Account.hasMany(models.Transaction, {
+      foreignKey: 'accountNumber',
+      targetKey: 'accountNumber',
+      as: 'transactions'
+    });
   };
-  // eslint-disable-next-line func-names
   Account.beforeCreate((account) => {
     account.accountNumber = Math.floor(Math.random() * 10 ** 10);
     account.createdOn = moment().valueOf();

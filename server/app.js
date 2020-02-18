@@ -4,6 +4,7 @@ import {
 } from 'debug';
 import userRouter from './routes/api/v1/user.route';
 import accountRouter from './routes/api/v1/account.route';
+import transactionRouter from './routes/api/v1/transaction.route';
 
 const app = express();
 const port = process.env.PORT || 8009;
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1/auth', userRouter);
 app.use('/api/v1', accountRouter);
+app.use('/api/v1', transactionRouter);
 
 
 app.listen(port, () => {
