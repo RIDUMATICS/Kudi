@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     createdOn: DataTypes.DATE,
     type: {
       type: DataTypes.ENUM,
-      values: ['credit', 'debit'],
+      values: ['Credit', 'Debit'],
     },
     accountNumber: DataTypes.BIGINT,
     cashier: DataTypes.INTEGER,

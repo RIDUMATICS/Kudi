@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { config } from 'dotenv';
+import { hashSync } from 'bcryptjs';
 import { registerAuthy, sendAutyToken, verifyAuthyToken } from '../utils/authyHelper';
 import genToken from '../utils/generateToken';
 import { User } from '../database/models';
@@ -138,6 +139,38 @@ class UserService {
     } catch (err) {
       err.status = err.status || 500;
       throw err;
+    }
+  }
+
+  static async updateDetails(user, email) {
+    try {
+      const foundUser = await User.findOne({ where: { email } });
+
+      if (foundUser) {
+        if (await user.enable2FA) {
+          const resp = await registerAuthy(foundUser);
+          // eslint-disable-next-line no-param-reassign
+          user.authyID = resp.user.id;
+        }
+
+        if (await user.password) {
+          if (!user.oldPassword || !foundUser.validatePassword(user.oldPassword)) {
+            const error = new Error('Incorrect previous password');
+            error.status = 400;
+            throw error;
+          }
+          // eslint-disable-next-line no-param-reassign
+          user.password = hashSync(user.password, 12);
+        }
+        const { dataValues } = await foundUser.update(user);
+        return _.omit(dataValues, ['createdAt', 'updatedAt', 'password']);
+      }
+      const error = new Error('User account doesn\'t exist');
+      error.status = 404;
+      throw error;
+    } catch (error) {
+      error.status = error.status || 500;
+      throw error;
     }
   }
 }

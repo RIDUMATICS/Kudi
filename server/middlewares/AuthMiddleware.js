@@ -18,7 +18,7 @@ const decodeToken = (req, res, next, token) => {
   jwt.verify(token, process.env.secretOrPrivateKey, (error, decode) => {
     if (!error && decode) {
       req.payload = decode;
-      return User.findOne({ where: { email: decode.email } })
+      return User.findOne({ where: { email: decode.email || decode.user } })
         .then(() => next())
         .catch(() => response.sendError(res, 401, 'invalid request token'));
     }
