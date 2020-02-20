@@ -48,6 +48,12 @@ class UserController {
       .then((createdStaff) => response.sendSuccess(res, 201, createdStaff, 'Registration was successful'))
       .catch((err) => response.sendError(res, err.status, err.message));
   }
+
+  static updateDetails(req, res) {
+    UserService.updateDetails(req.body, req.payload.email)
+      .then((updatedUser) => response.sendSuccess(res, 201, updatedUser, 'Update was successful'))
+      .catch((err) => response.sendError(res, err.status, err.message));
+  }
 }
 
 export default UserController;

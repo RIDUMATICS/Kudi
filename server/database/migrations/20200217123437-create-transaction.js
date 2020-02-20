@@ -12,7 +12,7 @@ module.exports = {
     },
     type: {
       type: Sequelize.ENUM,
-      values: ['credit', 'debit'],
+      values: ['Credit', 'Debit'],
       allowNull: false,
     },
     accountNumber: {

@@ -1,5 +1,7 @@
 import _ from 'lodash';
-import { Account, Transaction } from '../database/models';
+import { User, Account, Transaction } from '../database/models';
+import sendMail from '../utils/email';
+import messageTemplate from '../utils/messageTemplate';
 
 /** service that allows cashier perform transaction of user's account */
 class TransactionService {
@@ -10,7 +12,13 @@ class TransactionService {
 
   static async debitAccount(cashier, accountNumber, amount) {
     try {
-      const account = await Account.findOne({ where: { accountNumber } });
+      const account = await Account.findOne({
+        where: { accountNumber },
+        include: {
+          model: User,
+          as: 'user'
+        }
+      });
 
       if (account) {
         if (account.status === 'dormant' || account.status === 'draft') {
@@ -24,13 +32,15 @@ class TransactionService {
           account.balance = newBalance;
           await account.save();
           const transaction = await Transaction.create({
-            type: 'debit',
+            type: 'Debit',
             accountNumber,
             cashier,
             amount,
             oldBalance,
             newBalance
           });
+          await sendMail(account.user.email, 'Debit Transaction Alert', messageTemplate.transactionMessage(account.user, transaction));
+
           return _.pick(transaction, ['id', 'accountNumber', 'createdOn', 'cashier', 'type', 'amount', 'oldBalance', 'newBalance']);
         }
         const error = new Error('account balance is not sufficient');
@@ -53,7 +63,13 @@ class TransactionService {
 
   static async creditAccount(cashier, accountNumber, amount) {
     try {
-      const account = await Account.findOne({ where: { accountNumber } });
+      const account = await Account.findOne({
+        where: { accountNumber },
+        include: {
+          model: User,
+          as: 'user'
+        }
+      });
 
       if (account) {
         if (account.status === 'dormant' || account.status === 'draft') {
@@ -66,13 +82,15 @@ class TransactionService {
         account.balance = newBalance;
         await account.save();
         const transaction = await Transaction.create({
-          type: 'credit',
+          type: 'Credit',
           accountNumber,
           cashier,
           amount,
           oldBalance,
           newBalance
         });
+
+        await sendMail(account.user.email, 'Debit Transaction Alert', messageTemplate.transactionMessage(account.user, transaction));
         return _.pick(transaction, ['id', 'accountNumber', 'createdOn', 'cashier', 'type', 'amount', 'oldBalance', 'newBalance']);
       }
       const error = new Error('account number doesn\'t exist');

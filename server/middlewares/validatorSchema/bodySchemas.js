@@ -56,11 +56,25 @@ const transactionSchema = Joi.object({
     .required(),
 });
 
+const updateUserSchema = Joi.object({
+  firstName: Joi.string().regex(/^\D+$/).error(new Error('Please enter a valid first name')),
+  lastName: Joi.string().regex(/^\D+$/).error(new Error('Please enter a valid last name')),
+  password: Joi.string().regex(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[_!@#\$%\^&\*\-])(?=.{8,})')).strict()
+    .error(new Error('password must be at least 8 characters long; must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character')),
+  confirmPassword: Joi.string().valid(Joi.ref('password')).strict(),
+  oldPassword: Joi.string().regex(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[_!@#\$%\^&\*\-])(?=.{8,})')).strict()
+    .error(new Error('password must be at least 8 characters long; must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character')),
+  countryCode: Joi.string().regex(/^(\+?\d{1,3}|\d{1,4})$/).error(new Error('Please enter a valid Country Code')),
+  phoneNumber: Joi.string().regex(/^\d{1,14}$/).error(new Error('Please enter a valid phone number')),
+  enable2FA: Joi.boolean()
+});
+
 export default {
   '/signup': createUserSchema,
   '/signin': loginUserSchema,
   '/2fa': verifyAuthyTokenSchema,
   '/create/staff': createStaffSchema,
+  '/update': updateUserSchema,
   '/accounts': createAccountSchema,
   '/accounts/:accountNumber': updateStatusSchema,
   '/transactions/:accountNumber/debit': transactionSchema,
