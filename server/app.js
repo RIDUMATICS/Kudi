@@ -2,6 +2,7 @@ import express from 'express';
 import {
   log
 } from 'debug';
+import cors from 'cors';
 import helmet from 'helmet';
 import userRouter from './routes/api/v1/user.route';
 import accountRouter from './routes/api/v1/account.route';
@@ -19,7 +20,12 @@ app.use(express.urlencoded({
   extended: true
 }));
 
-app.get('api/v1', (req, res) => {
+const corsOptions = {
+  origin: process.env.ORIGIN,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+app.get('api/v1', cors(), (req, res) => {
   res.json({
     name: 'Kudi API',
     description: 'Kudi is a light-weight core banking application that powers banking operations like account creation, customer deposit and withdrawals.',
@@ -28,9 +34,9 @@ app.get('api/v1', (req, res) => {
   });
 });
 
-app.use('/api/v1/auth', userRouter);
-app.use('/api/v1', accountRouter);
-app.use('/api/v1', transactionRouter);
+app.use('/api/v1/auth', cors(corsOptions), userRouter);
+app.use('/api/v1', cors(corsOptions), accountRouter);
+app.use('/api/v1', cors(corsOptions), transactionRouter);
 
 app.use((req, res, next) => {
   const error = new Error(`Uh Oh! We lost this page ${req.originalUrl}`);
@@ -38,6 +44,7 @@ app.use((req, res, next) => {
   next(error);
 });
 
+// eslint-disable-next-line no-unused-vars
 app.use((error, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   response.sendError(res, statusCode, error.message);
