@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "nodemon --exec babel-node server/app.js",
     "build": "babel server --out-dir dist",
-    "serve": "node dist/app.js"
+    "start": "node dist/app.js"
   },
   "dependencies": {
+    "@babel/polyfill": "7.10.1",
     "@sendgrid/mail": "6.5.2",
     "authy": "1.4.0",
     "authy-client": "1.1.4",
