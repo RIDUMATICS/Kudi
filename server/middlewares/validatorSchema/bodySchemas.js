@@ -15,7 +15,7 @@ const createUserSchema = Joi.object({
   confirmPassword: Joi.string().valid(Joi.ref('password')).required().strict()
     .error(new Error('your password and confirm password do not match')),
   countryCode: Joi.string().regex(/^(\+?\d{1,3}|\d{1,4})$/).required().error(new Error('Please enter a valid Country Code')),
-  phoneNumber: Joi.string().regex(/^\d{1,14}$/).required().error(new Error('Please enter a valid phone number')),
+  phoneNumber: Joi.string().regex(/([+]?\d{1,3}[.-\s]?)?(\d{3}[.-]?){2}\d{4}/).required().error(new Error('Please enter a valid phone number')),
   enable2FA: Joi.boolean().default(false)
 });
 
@@ -53,7 +53,8 @@ const updateStatusSchema = Joi.object({
 
 const transactionSchema = Joi.object({
   amount: Joi.number().min(0.0).positive().precision(2)
-    .required(),
+    .required()
+    .error(new Error('Please enter a valid amount')),
 });
 
 const updateUserSchema = Joi.object({

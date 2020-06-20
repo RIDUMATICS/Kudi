@@ -9,7 +9,7 @@ config();
  * @param {object} payload
  */
 const genToken = (user, authyID = '') => {
-  let payload = _.pick(user, ['id', 'isAdmin', 'type', 'email']);
+  let payload = _.pick(user, ['id', 'firstName', 'lastName', 'isAdmin', 'type', 'email', 'phoneNumber', 'enable2FA']);
 
   if (user.enable2FA === true && authyID === '') {
     payload = { allowOnly2FA: true, user: user.email };

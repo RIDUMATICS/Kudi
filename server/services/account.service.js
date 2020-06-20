@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import {
   User,
-  Account
+  Account,
+  Transaction
 } from '../database/models';
 
 
@@ -73,7 +74,7 @@ class AccountService {
         }]
       });
 
-      accounts = accounts.map((account) => _.pick(account, ['accountNumber', 'type', 'balance', 'status', 'user.firstName', 'user.lastName', 'user.email']));
+      accounts = accounts.map((account) => _.pick(account, ['accountNumber', 'type', 'balance', 'status', 'createdOn', 'user.firstName', 'user.lastName', 'user.email']));
 
       if (status) {
         return accounts.filter((account) => account.status === status);
@@ -102,7 +103,7 @@ class AccountService {
           }]
         });
 
-        return accounts.map((account) => _.pick(account, ['accountNumber', 'type', 'balance', 'status', 'user.firstName', 'user.lastName', 'user.email']));
+        return accounts.map((account) => _.pick(account, ['accountNumber', 'type', 'balance', 'status', 'createdOn', 'user.firstName', 'user.lastName', 'user.email']));
       }
       const error = new Error('user with this email address not found');
       error.status = 400;
@@ -127,8 +128,16 @@ class AccountService {
         }
       });
 
+      let transactions = await Transaction.findAll({
+        where: { accountNumber }
+      });
+
+      transactions = transactions.map((transaction) => _.pick(transaction, ['createdOn', 'type', 'accountNumber', 'cashier', 'amount', 'oldBalance', 'newBalance']));
+
       if (foundAccount) {
-        return _.pick(foundAccount, ['accountNumber', 'type', 'balance', 'status', 'user.firstName', 'user.lastName', 'user.email']);
+        const resp = _.pick(foundAccount, ['accountNumber', 'type', 'balance', 'status', 'createdOn', 'user.firstName', 'user.lastName', 'user.email']);
+        resp.transactions = transactions;
+        return resp;
       }
       const error = new Error('account number doesn\'t exist');
       error.status = 404;
@@ -152,11 +161,18 @@ class AccountService {
           as: 'user'
         }
       });
+
+      let transactions = await Transaction.findAll({
+        where: { accountNumber }
+      });
+
+      transactions = transactions.map((transaction) => _.pick(transaction, ['createdOn', 'type', 'accountNumber', 'cashier', 'amount', 'oldBalance', 'newBalance']));
+
       if (account) {
         account.status = status;
         await account.save();
-
-        return _.pick(account, ['accountNumber', 'type', 'balance', 'status', 'user.firstName', 'user.lastName', 'user.email']);
+        account.transactions = transactions;
+        return _.pick(account, ['accountNumber', 'type', 'balance', 'status', 'createdOn', 'transactions', 'user.firstName', 'user.lastName', 'user.email']);
       }
       const error = new Error('account number doesn\'t exist');
       error.status = 404;
