@@ -1,11 +1,23 @@
+/* eslint-disable no-param-reassign */
 import _ from 'lodash';
-import { config } from 'dotenv';
-import { hashSync } from 'bcryptjs';
-import { registerAuthy, sendAutyToken, verifyAuthyToken } from '../utils/authyHelper';
+import {
+  config
+} from 'dotenv';
+import {
+  hashSync
+} from 'bcryptjs';
+import {
+  registerAuthy,
+  sendAutyToken,
+  verifyAuthyToken
+} from '../utils/authyHelper';
 import genToken from '../utils/generateToken';
-import { User } from '../database/models';
+import {
+  User
+} from '../database/models';
 import sendMail from '../utils/email';
 import messageTemplate from '../utils/messageTemplate';
+import imageUpload from '../utils/imageUpload';
 
 config();
 
@@ -17,7 +29,11 @@ class UserService {
    */
   static async createUser(user, profileImage) {
     try {
-      const isUser = await User.findOne({ where: { email: user.email } });
+      const isUser = await User.findOne({
+        where: {
+          email: user.email
+        }
+      });
       let authyID;
 
       if (isUser) {
@@ -31,6 +47,7 @@ class UserService {
         authyID = resp.user.id;
       }
 
+      profileImage = await imageUpload(profileImage);
 
       const {
         dataValues
@@ -64,7 +81,11 @@ class UserService {
     password
   }) {
     try {
-      const user = await User.findOne({ where: { email } });
+      const user = await User.findOne({
+        where: {
+          email
+        }
+      });
       if (user) {
         const isValid = user.validatePassword(password);
 
@@ -75,7 +96,10 @@ class UserService {
             await sendAutyToken(user.dataValues);
             return {
               token,
-              user: { enable2FA: user.dataValues.enable2FA }
+              user: {
+                enable2FA: user.dataValues.enable2FA,
+                phoneNumber: user.dataValues.phoneNumber
+              }
             };
           }
           return {
@@ -94,10 +118,18 @@ class UserService {
     }
   }
 
-  static async verifyToken({ authyToken }, payload) {
+  static async verifyToken({
+    authyToken
+  }, payload) {
     try {
       if (payload.allowOnly2FA) {
-        const { dataValues } = await User.findOne({ where: { email: payload.user } });
+        const {
+          dataValues
+        } = await User.findOne({
+          where: {
+            email: payload.user
+          }
+        });
         await verifyAuthyToken(dataValues.authyID, authyToken);
 
         const token = genToken(_.omit(dataValues, ['enable2FA']));
@@ -119,7 +151,11 @@ class UserService {
   static async createAStaff(staff, profileImage) {
     // eslint-disable-next-line no-useless-catch
     try {
-      const isStaff = await User.findOne({ where: { email: staff.email } });
+      const isStaff = await User.findOne({
+        where: {
+          email: staff.email
+        }
+      });
 
       if (isStaff) {
         const err = new Error(`a ${isStaff.type} with this email address already exist`);
@@ -127,9 +163,15 @@ class UserService {
         throw err;
       }
 
-      const newStaff = { ...staff, type: 'staff', profileImage: profileImage.secure_url };
+      const newStaff = {
+        ...staff,
+        type: 'staff',
+        profileImage: profileImage.secure_url
+      };
 
-      const { dataValues } = await User.create(newStaff);
+      const {
+        dataValues
+      } = await User.create(newStaff);
 
       await sendMail(staff.email, 'An account has been created for you on KUDI', messageTemplate.staffCreated(staff));
 
@@ -144,12 +186,17 @@ class UserService {
 
   static async updateDetails(user, email) {
     try {
-      const foundUser = await User.findOne({ where: { email } });
+      const foundUser = await User.findOne({
+        where: {
+          email
+        }
+      });
 
       if (foundUser) {
+        user.firstName = user.firstName || foundUser.firstName;
+        user.lastName = user.lastName || foundUser.lastName;
         if (await user.enable2FA) {
           const resp = await registerAuthy(foundUser);
-          // eslint-disable-next-line no-param-reassign
           user.authyID = resp.user.id;
         }
 
@@ -159,15 +206,41 @@ class UserService {
             error.status = 400;
             throw error;
           }
-          // eslint-disable-next-line no-param-reassign
           user.password = hashSync(user.password, 12);
         }
-        const { dataValues } = await foundUser.update(user);
+        const {
+          dataValues
+        } = await foundUser.update(user);
         return _.omit(dataValues, ['createdAt', 'updatedAt', 'password']);
       }
       const error = new Error('User account doesn\'t exist');
       error.status = 404;
       throw error;
+    } catch (error) {
+      error.status = error.status || 500;
+      throw error;
+    }
+  }
+
+  static async getProfile({
+    email
+  }) {
+    try {
+      const user = await User.findOne({
+        where: {
+          email
+        }
+      });
+
+      if (!user) {
+        const error = new Error('Invalid User');
+        error.status = 400;
+        throw error;
+      }
+
+      return {
+        user: _.omit(user.dataValues, ['password', 'updatedAt', 'createdAt'])
+      };
     } catch (error) {
       error.status = error.status || 500;
       throw error;

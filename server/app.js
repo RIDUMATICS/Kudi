@@ -23,9 +23,9 @@ app.use(express.urlencoded({
 const corsOptions = {
   origin: process.env.ORIGIN,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
+};
 
-app.get('api/v1', cors(), (req, res) => {
+app.get('/api/v1', cors(), (req, res) => {
   res.json({
     name: 'Kudi API',
     description: 'Kudi is a light-weight core banking application that powers banking operations like account creation, customer deposit and withdrawals.',

@@ -33,7 +33,7 @@ class messageTemplate {
     <p>We wish to inform you that a ${type} transaction occurred on your account with us.
     <br/>The details of this transaction are shown below:</p>
     <p><strong><u>Transaction Notification</u></strong></p>
-    <p>Account Number : ${accountNumber}</p>
+    <p>Account Number : ${accountNumber[0]}XX..${accountNumber.slice(-4)}</p>
     <p>Amount : ${amount}</p>
     <p>Value Date : ${transactionDate}</p>
     <p>Time of Transaction : ${transactionTime}</p>
@@ -41,6 +41,26 @@ class messageTemplate {
     <p>Current Balance :  ${balance}<br/>
     Available Balance : ${balance}</p>
   `;
+  }
+
+  static alert({
+    accountNumber, amount, newBalance, createdOn, type
+  }) {
+    const acc = `${accountNumber[0]}XX..${accountNumber.slice(-4)}`;
+
+    const amountFormat = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 2
+    });
+
+    const balance = amountFormat.format(newBalance);
+    // eslint-disable-next-line no-param-reassign
+    amount = amountFormat.format(amount);
+
+    const transactionDate = moment(createdOn).format('DD-MMM-YYYY, HH:mm');
+
+    return `\nTxn: ${type} \nAcc: ${acc} \nAmt: ${amount} \nDes: ${type} Transaction Alert \nDate: ${transactionDate} \nBal: ${balance}`;
   }
 }
 

@@ -54,6 +54,12 @@ class UserController {
       .then((updatedUser) => response.sendSuccess(res, 201, updatedUser, 'Update was successful'))
       .catch((err) => response.sendError(res, err.status, err.message));
   }
+
+  static getProfile(req, res) {
+    UserService.getProfile(req.payload)
+      .then((userProfile) => response.sendSuccess(res, 200, userProfile, 'Pofile fetch was successful'))
+      .catch((err) => response.sendError(res, err.status, err.message));
+  }
 }
 
 export default UserController;

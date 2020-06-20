@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { User, Account, Transaction } from '../database/models';
 import sendMail from '../utils/email';
 import messageTemplate from '../utils/messageTemplate';
+import sendSMS from '../utils/smsNotification';
 
 /** service that allows cashier perform transaction of user's account */
 class TransactionService {
@@ -40,7 +41,7 @@ class TransactionService {
             newBalance
           });
           await sendMail(account.user.email, 'Debit Transaction Alert', messageTemplate.transactionMessage(account.user, transaction));
-
+          await sendSMS(messageTemplate.alert(transaction), account.user.phoneNumber);
           return _.pick(transaction, ['id', 'accountNumber', 'createdOn', 'cashier', 'type', 'amount', 'oldBalance', 'newBalance']);
         }
         const error = new Error('account balance is not sufficient');
@@ -90,7 +91,8 @@ class TransactionService {
           newBalance
         });
 
-        await sendMail(account.user.email, 'Debit Transaction Alert', messageTemplate.transactionMessage(account.user, transaction));
+        await sendMail(account.user.email, 'Credit Transaction Alert', messageTemplate.transactionMessage(account.user, transaction));
+        await sendSMS(messageTemplate.alert(transaction), account.user.phoneNumber);
         return _.pick(transaction, ['id', 'accountNumber', 'createdOn', 'cashier', 'type', 'amount', 'oldBalance', 'newBalance']);
       }
       const error = new Error('account number doesn\'t exist');
