@@ -26,6 +26,10 @@ const corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
+app.get('/', cors(), (req, res) => {
+  res.redirect('/api/v1');
+});
+
 app.get('/api/v1', cors(), (req, res) => {
   res.json({
     name: 'Kudi API',
