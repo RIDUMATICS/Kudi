@@ -10,8 +10,8 @@ const sendMail = async (to, subject, message) => {
     const msg = {
       to,
       from: {
-        email: 'support@kudi.com',
-        name: 'Kudi Bank Support',
+        email: 'support@Banka.com',
+        name: 'Banka Support',
       },
       subject,
       html: message,

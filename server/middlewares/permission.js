@@ -35,13 +35,15 @@ export const staffAuth = (req, res, next) => {
     );
   }
   const { type } = req.payload;
-
-  if (type !== 'staff') {
-    return response.sendError(res, 403, 'only a staff can perform this operation');
+  if (!(type === 'staff' || type === 'admin')) {
+    return response.sendError(
+      res,
+      403,
+      'only a staff can perform this operation'
+    );
   }
   return next();
 };
-
 
 export const check2FA = (req, res, next) => {
   if (!req.payload) {

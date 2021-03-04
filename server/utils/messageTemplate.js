@@ -9,7 +9,7 @@ class messageTemplate {
       <li>Password: ${password}</li>
     </ul>
     <p>Manager Operations,<br/>
-    KUDI BANK, Nigeria.</p>
+    BANKA BANK, Nigeria.</p>
   `;
   }
 

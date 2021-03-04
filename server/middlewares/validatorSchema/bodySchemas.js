@@ -4,6 +4,15 @@ import Joi from 'joi';
 const email = Joi.string().email().lowercase().required()
   .error(new Error('Please enter a valid E-mail'));
 
+const amount = Joi.number().min(0.0).positive().precision(2)
+  .required()
+  .error(new Error('Please enter a valid amount'));
+
+const accountNumber = Joi.string()
+  .regex(/^\d+$/)
+  .required()
+  .error(new Error('accountNumber must be an integer'));
+
 const password = Joi.string().regex(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[_!@#\$%\^&\*\-])(?=.{8,})')).required().strict()
   .error(new Error('password must be at least 8 characters long; must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character'));
 
@@ -52,9 +61,13 @@ const updateStatusSchema = Joi.object({
 });
 
 const transactionSchema = Joi.object({
-  amount: Joi.number().min(0.0).positive().precision(2)
-    .required()
-    .error(new Error('Please enter a valid amount')),
+  amount
+});
+
+const transferSchema = Joi.object({
+  amount,
+  password,
+  receiverAcctNumber: accountNumber
 });
 
 const updateUserSchema = Joi.object({
@@ -80,4 +93,5 @@ export default {
   '/accounts/:accountNumber': updateStatusSchema,
   '/transactions/:accountNumber/debit': transactionSchema,
   '/transactions/:accountNumber/credit': transactionSchema,
+  '/transactions/:accountNumber/transfer': transferSchema,
 };

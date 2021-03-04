@@ -27,7 +27,7 @@ module.exports = {
     },
     type: {
       type: Sequelize.ENUM,
-      values: ['client', 'staff'],
+      values: ['client', 'staff', 'admin'],
       allowNull: false,
     },
     isAdmin: {

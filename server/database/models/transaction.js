@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       values: ['Credit', 'Debit'],
     },
     accountNumber: DataTypes.BIGINT,
+    desc: DataTypes.STRING,
     cashier: DataTypes.INTEGER,
     amount: DataTypes.FLOAT,
     oldBalance: DataTypes.FLOAT,

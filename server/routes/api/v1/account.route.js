@@ -7,6 +7,7 @@ import QuerySchemaValidator from '../../../middlewares/QuerySchemaValidator';
 import ParamsSchemaValidator from '../../../middlewares/ParamsSchemaValidator';
 import authMiddleware from '../../../middlewares/AuthMiddleware';
 import {
+  adminAuth,
   check2FA,
   staffAuth
 } from '../../../middlewares/permission';
@@ -34,6 +35,10 @@ router
     check2FA,
     AccountContoller.getAUserAccounts);
 
+router.get('/verify/:accountNumber',
+  ParamsSchemaValidator,
+  AccountContoller.verifyAccount);
+
 router
   .get('/accounts/:accountNumber',
     authMiddleware,
@@ -56,7 +61,7 @@ router
     authMiddleware,
     check2FA,
     ParamsSchemaValidator,
-    staffAuth,
+    adminAuth,
     AccountContoller.deleteAccount);
 
 export default router;

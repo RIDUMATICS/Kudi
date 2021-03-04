@@ -6,7 +6,7 @@ module.exports = {
     firstName: 'John',
     lastName: 'Doe',
     password: '$2a$12$cgB3a2.KkzF5BVEbYtv2ge2EgH7qy9G7NQpZDk7KC563oBM7KWf2q',
-    type: 'staff',
+    type: 'admin',
     isAdmin: true,
     profileImage: 'https://res.cloudinary.com/ridumatics/image/upload/v1583229535/elo88g1sndlyf7ylcx63.jpg',
     countryCode: '234',

@@ -18,6 +18,9 @@ module.exports = {
     accountNumber: {
       type: Sequelize.BIGINT
     },
+    desc: {
+      type: Sequelize.STRING
+    },
     cashier: {
       type: Sequelize.INTEGER
     },

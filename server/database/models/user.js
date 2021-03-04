@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     type: {
       type: DataTypes.ENUM,
-      values: ['client', 'staff'],
+      values: ['client', 'staff', 'admin'],
     },
     isAdmin: DataTypes.BOOLEAN,
     countryCode: DataTypes.STRING,

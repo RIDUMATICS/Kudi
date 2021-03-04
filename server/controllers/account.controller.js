@@ -37,6 +37,18 @@ class AccountController {
    * @returns {json} json
    * @memberof AccountController
    */
+  static verifyAccount(req, res) {
+    AccountService.verifyAccountNumber(req.params)
+      .then((resp) => response.sendSuccess(res, 200, resp, 'Account verified'))
+      .catch((err) => response.sendError(res, err.status, err.message));
+  }
+
+  /**
+   * @param{object}  request express request object
+   * @param{object}  response express request object
+   * @returns {json} json
+   * @memberof AccountController
+   */
   static getAUserAccounts(req, res) {
     AccountService.getAUserAccounts(req.payload)
       .then((resp) => response.sendSuccess(res, 200, resp, 'Account fetch successfull'))

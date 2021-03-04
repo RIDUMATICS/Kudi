@@ -30,6 +30,15 @@ router
     ParamsSchemaValidator,
     TransactionContoller.creditUserAccount);
 
+router.post(
+  '/transactions/:accountNumber/transfer',
+  authMiddleware,
+  check2FA,
+  BodySchemaValidator,
+  ParamsSchemaValidator,
+  TransactionContoller.transferAccount
+);
+
 router
   .get('/accounts/:accountNumber/transactions',
     authMiddleware,

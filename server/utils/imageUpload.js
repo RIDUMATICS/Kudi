@@ -19,7 +19,7 @@ export default async (profileImage) => {
   // eslint-disable-next-line camelcase
   const { secure_url } = await cloudinary.uploader.upload(
     path,
-    { public_id: `kudi/${uniqueFilename}`, tags: 'kudi' }
+    { public_id: `banka/${uniqueFilename}`, tags: 'banka' }
   );
 
   return { secure_url };
